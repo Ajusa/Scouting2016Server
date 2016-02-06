@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <script src="lib/riot+compiler.min.js"></script>
+    <script src="lib/riotcontrol.js"></script>
+    <script src="lib/ikki.min.js"></script>
+    <!--<script src="lib/jquery.min.js"></script>-->
+    <title>Hello World!</title>
+    <link rel="stylesheet" type="text/css" href="css/semantic.min.css">
+    <script src="css/semantic.min.js"></script>
+    <script src="store/serverStore.js"></script>
+    <script src="tag/app.html" type="riot/tag"></script>
+    <script src="tag/home.html" type="riot/tag"></script>
+    <!-- mount the tag -->
+    <script>
+    var serverStore = new serverStore(); // Create a store instance.
+    RiotControl.addStore(serverStore);
+    riot.mount('*');
+    </script>
+</head>
+
+<body>
+    <app></app>
+</body>
+
+</html>

@@ -1,0 +1,69 @@
+<home>
+    <h1>Home</h1>
+    <div class="ui card">
+        <div class="content">
+            <div class="header">Server Status</div>
+            <div class="content">
+                <p class="meta">{serverStatus}</p>
+                <button class="ui primary button" onclick="{startServer}">
+                    Start Server
+                </button>
+                <button class="ui button" onclick="{stopServer}">
+                    Stop Server
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="ui card">
+        <div class="content">
+            <div class="header">Last Scout Data</div>
+            <div class="meta">{time}</div>
+        </div>
+    </div>
+    <div class="ui card">
+        <div class="content">
+            <div class="header">Statistics</div>
+            <div class="ui statistic">
+                <div class="label">
+                    Fouls
+                </div>
+                <div class="value">
+                    9001
+                </div>
+            </div>
+            <div class="ui statistic">
+                <div class="label">
+                    Points
+                </div>
+                <div class="value">
+                    0
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    self = this;
+    this.serverStatus = "Shut Down";
+    this.time;
+    stopServer(e) {
+        RiotControl.trigger('stop_server')
+    }
+    startServer(e) {
+        RiotControl.trigger('start_server')
+        RiotControl.trigger('get_ip')
+    }
+    RiotControl.on('set_ip', function(ip) {
+        self.serverStatus = "Server On: IP is " + ip;
+        self.update()
+    })
+    RiotControl.on('server_stopped', function() {
+        self.serverStatus = "Shut Down";
+        self.update()
+    })
+    RiotControl.on('new_data', function(time, name) {
+        self.time = time + " by "+ name;
+        
+        self.update()
+    })
+    </script>
+</home>

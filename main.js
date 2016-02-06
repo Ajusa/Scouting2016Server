@@ -1,34 +1,51 @@
-var express = require('express');
-var app = express();
-var fs = require('fs');
-var bodyParser = require('body-parser');
-var cors = require('cors')
-var json2csv = require('nice-json2csv');
-app.use(bodyParser.json()); // support json encoded bodies
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
-app.use(cors());
-var portNum = 628; //Because Eashwar said so
-var haozhiSaidNice = new Array();
-app.post('/', function(req, res) {
-   // res.send('POST request to the homepage');
-    //console.log();
-    haozhiSaidNice.push(req.body);
-    fs.writeFile("test.csv", json2csv.convert(haozhiSaidNice), function(err) {
-        if (err) {
-            return console.log(err);
-        }
-        console.log("The file was saved!");
-    });
-});
-app.get('/', function(req, res) {
-    res.send("<pre>" + JSON.stringify(haozhiSaidNice, null, 4) + "</pre>");
+'use strict';
+
+const electron = require('electron');
+// Module to control application life.
+const app = electron.app;
+// Module to create native browser window.
+const BrowserWindow = electron.BrowserWindow;
+
+// Keep a global reference of the window object, if you don't, the window will
+// be closed automatically when the JavaScript object is garbage collected.
+let mainWindow;
+
+function createWindow () {
+  // Create the browser window.
+  mainWindow = new BrowserWindow({width: 800, height: 600});
+
+  // and load the index.html of the app.
+  mainWindow.loadURL('file://' + __dirname + '/index.html');
+
+  // Open the DevTools.
+  //mainWindow.webContents.openDevTools();
+
+  // Emitted when the window is closed.
+  mainWindow.on('closed', function() {
+    // Dereference the window object, usually you would store windows
+    // in an array if your app supports multi windows, this is the time
+    // when you should delete the corresponding element.
+    mainWindow = null;
+  });
+}
+
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+app.on('ready', createWindow);
+
+// Quit when all windows are closed.
+app.on('window-all-closed', function () {
+  // On OS X it is common for applications and their menu bar
+  // to stay active until the user quits explicitly with Cmd + Q
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
 });
 
-app.listen(portNum, function() {
-    console.log('Example app listening on port ' + portNum + '!');
+app.on('activate', function () {
+  // On OS X it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  if (mainWindow === null) {
+    createWindow();
+  }
 });
-//function jsontocsv(input){
-//	return input.auton.move + ',' + input.auton.foul + ',' + input.auton.interfere + ',' + input.auton.defense.reach + ',' + input.auton.defense.
-//}
