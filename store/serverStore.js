@@ -10,7 +10,7 @@ function serverStore() {
     var address, os = require('os'),
         ifaces = os.networkInterfaces();
     var portNum = 628; //Because Eashwar said so
-    var haozhiSaidNice = new Array();
+    var haozhiSaidNice = [];
     var self = this;
     self.on('start_server', function() {
         app.use(bodyParser.json()); // support json encoded bodies
@@ -18,16 +18,18 @@ function serverStore() {
             extended: true
         }));
         app.use(cors());
-
         app.post('/', function(req, res) {
             haozhiSaidNice.push(req.body);
+            console.log(req.body)
             fs.writeFile("test.csv", json2csv.convert(haozhiSaidNice), function(err) {
                 if (err) {
                     return console.log(err);
                 }
-                self.trigger("new_data", moment().format("h:mm:ss a"), req.body.name)
+                RiotControl.trigger("new_data", moment().format("h:mm:ss a"), req.body.name)
                 console.log("The file was saved!");
             });
+            res.sendStatus(200)
+            RiotControl.trigger('data_update', haozhiSaidNice);
         });
         app.get('/', function(req, res) {
             res.send("<pre>" + JSON.stringify(haozhiSaidNice, null, 4) + "</pre>");
@@ -50,9 +52,8 @@ function serverStore() {
             var iface = ifaces[dev].filter(function(details) {
                 return details.family === 'IPv4' && details.internal === false;
             });
-
             if (iface.length > 0) address = iface[0].address;
-            self.trigger('set_ip', address)
+            RiotControl.trigger('set_ip', address)
         }
         console.log(address)
     });
@@ -61,7 +62,7 @@ function serverStore() {
 
         // listen for an event
         serverStopper.close();
-        self.trigger('server_stopped');
+        RiotControl.trigger('server_stopped');
 
     });
 }

@@ -17,7 +17,9 @@
     <div class="ui card">
         <div class="content">
             <div class="header">Last Scout Data</div>
-            <div class="meta">{time}</div>
+            <div each={data}>
+                <div class="meta">{data}</div>
+            </div>
         </div>
     </div>
     <div class="ui card">
@@ -43,6 +45,8 @@
     </div>
     <script>
     self = this;
+    self.data = [];
+    self.temp;
     this.serverStatus = "Shut Down";
     this.time;
     stopServer(e) {
@@ -61,8 +65,10 @@
         self.update()
     })
     RiotControl.on('new_data', function(time, name) {
-        self.time = time + " by "+ name;
-        
+        self.temp = time + " by " + name;
+        self.data.unshift({
+            data: self.temp
+        })
         self.update()
     })
     </script>
